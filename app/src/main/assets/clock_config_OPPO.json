@@ -1,0 +1,46 @@
+{
+  "configurations": [
+    {
+      "name": "Normal",
+      "id": 0,
+      "hourSize": 150,
+      "colon1Size": 100,
+      "minuteSize": 150,
+      "colon2Size": 100,
+      "secondSize": 150,
+      "hourPosition": { "x": 400, "y": 300 },
+      "colon1Position": { "x": 770, "y": 390 },
+      "minutePosition": { "x": 980, "y": 300 },
+      "colon2Position": { "x": 1330, "y": 390 },
+      "secondPosition": { "x": 1550, "y": 300 }
+    },
+    {
+      "name": "MinuteBig",
+      "id": 1,
+      "hourSize": 150,
+      "colon1Size": 100,
+      "minuteSize": 350,
+      "colon2Size": 100,
+      "secondSize": 150,
+      "hourPosition": { "x": 150, "y": 490 },
+      "colon1Position": { "x": 490, "y": 570 },
+      "minutePosition": { "x": 660, "y": 0 },
+      "colon2Position": { "x": 1550, "y": 570 },
+      "secondPosition": { "x": 1750, "y": 490 }
+    },
+    {
+      "name": "SecondBig",
+      "id": 2,
+      "hourSize": 150,
+      "colon1Size": 100,
+      "minuteSize": 150,
+      "colon2Size": 100,
+      "secondSize": 350,
+      "hourPosition": { "x": 150, "y": 490 },
+      "colon1Position": { "x": 480, "y": 570 },
+      "minutePosition": { "x": 670, "y": 490 },
+      "colon2Position": { "x": 1030, "y": 570 },
+      "secondPosition": { "x": 1200, "y": 0 }
+    }
+  ]
+}

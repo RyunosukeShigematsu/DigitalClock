@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "756384188903",
+    "project_id": "digitalclock-a0ebb",
+    "storage_bucket": "digitalclock-a0ebb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:756384188903:android:2c2b2bfd4ace04aea85542",
+        "android_client_info": {
+          "package_name": "com.example.digitalclock"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_E-EqQGxYqR9jyEcdAj7Qio4GB-Xlczg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
