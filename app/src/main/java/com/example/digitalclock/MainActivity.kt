@@ -16,6 +16,10 @@ import android.os.Build
 
 
 
+aaaaaaaaaaaaaaaa
+
+
+
 class MainActivity : AppCompatActivity() {
     //機種選択
     //OPPO = 1
