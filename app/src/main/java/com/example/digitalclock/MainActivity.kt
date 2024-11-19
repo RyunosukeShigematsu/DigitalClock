@@ -15,11 +15,6 @@ import android.util.Log
 import android.os.Build
 
 
-
-aaaaaaaaaaaaaaaa
-
-
-
 class MainActivity : AppCompatActivity() {
     //機種選択
     //OPPO = 1
@@ -31,6 +26,9 @@ class MainActivity : AppCompatActivity() {
         Build.MANUFACTURER.equals("google", ignoreCase = true) && Build.MODEL.equals("Pixel 7a", ignoreCase = true) -> 2
         else -> 1 // その他の機種
     }
+
+    //時計の表示を手動で変更
+    private var manualId = 1
 
     //時計
     private lateinit var hourTextView: TextView
@@ -45,16 +43,14 @@ class MainActivity : AppCompatActivity() {
 
     // タスク設定変数
     private var startTime: Calendar = Calendar.getInstance()// 初期時間（仮）
-    private var intervalTime1 = 1 // ミッション1（仮）
-    private var intervalTime2 = 1 // ミッション2（仮）
+    private var intervalTime = 1 // ミッション1（仮）
     private var taskDuration = 1 // タスク時間（仮）
 
     // startTime を解析して設定
     val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
 
     // クラスのプロパティとして taskCounts を定義
-    private var taskCounts1: Long = 0
-    private var taskCounts2: Long = 0
+    private var taskCounts: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,19 +82,20 @@ class MainActivity : AppCompatActivity() {
             clockConfig = loadJsonConfig("clock_config_OPPO.json")
             //タスクプロファイルを選択
             selectTaskProfile("task1") // "task1"を選択
+            // 初回実行時にタスク設定を準備する
+            prepareTaskConfigs()
+            //時計を表示
+            updateTime()
         }
         else if(model == 2) {
             clockConfig = loadJsonConfig("clock_config_Pixel.json")
             //タスクプロファイルを選択
             selectTaskProfile("task2") // "task2"を選択
+            // 初回実行時にタスク設定を準備する
+            prepareTaskConfigs()
+            //時計を表示
+            manualUpdateTime()
         }
-
-
-        // 初回実行時にタスク設定を準備する
-        prepareTaskConfigs1()
-        prepareTaskConfigs2()
-        //時計を表示
-        updateTime()
 
 
         // システムUIを非表示に設定
@@ -116,8 +113,7 @@ class MainActivity : AppCompatActivity() {
 
         // 選択されたタスクの設定を読み込む
         val startTimeString = selectedTask.get("startTime").asString
-        intervalTime1= selectedTask.get("intervalTime1").asInt
-        intervalTime2= selectedTask.get("intervalTime2").asInt
+        intervalTime= selectedTask.get("intervalTime").asInt
         taskDuration = selectedTask.get("taskDuration").asInt
 
         // startTime を解析して設定
@@ -158,59 +154,28 @@ class MainActivity : AppCompatActivity() {
     )
 
     // 各タスクの時間範囲をリストに保存
-    val taskConfigs1 = mutableListOf<TaskTimeConfig1>()
-    val taskConfigs2 = mutableListOf<TaskTimeConfig2>()
+    val taskConfigs = mutableListOf<TaskTimeConfig1>()
 
 
     // タスク範囲を事前に計算してリストに格納する関数（ミッション1）
-    private fun prepareTaskConfigs1() {
+    private fun prepareTaskConfigs() {
 
-        if (taskDuration % intervalTime1 == 0) {
-            taskCounts1 = (taskDuration / intervalTime1 - 1).toLong()  // Int を Long に変換
+        if (taskDuration % intervalTime == 0) {
+            taskCounts = (taskDuration / intervalTime - 1).toLong()  // Int を Long に変換
         } else {
-            taskCounts1 = (taskDuration / intervalTime1).toLong()  // Int を Long に変換
+            taskCounts = (taskDuration / intervalTime).toLong()  // Int を Long に変換
         }
 
 
-        for (taskNumber in 1..taskCounts1) {
-            val taskDurationInMillis = (taskNumber * intervalTime1 * 60 * 1000).toLong()
+        for (taskNumber in 1..taskCounts) {
+            val taskDurationInMillis = (taskNumber * intervalTime * 60 * 1000).toLong()
             val taskTime = startTime.timeInMillis + taskDurationInMillis
             val threeMinutesBefore = taskTime - (3 * 60 * 1000)
             val oneMinuteBefore = taskTime - (60 * 1000)
             val oneMinuteAfter = taskTime + (60 * 1000)
 
 
-            taskConfigs1.add(TaskTimeConfig1(taskCounts1, taskTime, threeMinutesBefore, oneMinuteBefore, oneMinuteAfter))
-
-            // ログに時間をフォーマットして出力
-//            Log.d("TaskConfig", "Task #$taskNumber:")
-//            Log.d("TaskConfig", "  Task Time: ${timeFormat.format(taskTime)}")
-//            Log.d("TaskConfig", "  3 minutes before: ${timeFormat.format(threeMinutesBefore)}")
-//            Log.d("TaskConfig", "  1 minute before: ${timeFormat.format(oneMinuteBefore)}")
-//            Log.d("TaskConfig", "  1 minute after: ${timeFormat.format(oneMinuteAfter)}")
-//            Log.d("TaskConfig", "---------") // 区切り
-        }
-    }
-
-
-    // タスク範囲を事前に計算してリストに格納する関数（ミッション2）
-    private fun prepareTaskConfigs2() {
-        if (taskDuration % intervalTime2 == 0) {
-            taskCounts2 = (taskDuration / intervalTime2 - 1).toLong()  // Int を Long に変換
-        } else {
-            taskCounts2 = (taskDuration / intervalTime2).toLong()  // Int を Long に変換
-        }
-
-
-        for (taskNumber in 1..taskCounts2) {
-            val taskDurationInMillis = (taskNumber * intervalTime2 * 60 * 1000).toLong()
-            val taskTime = startTime.timeInMillis + taskDurationInMillis
-            val threeMinutesBefore = taskTime - (3 * 60 * 1000)
-            val oneMinuteBefore = taskTime - (60 * 1000)
-            val oneMinuteAfter = taskTime + (60 * 1000)
-
-
-            taskConfigs2.add(TaskTimeConfig2(taskCounts2, taskTime, threeMinutesBefore, oneMinuteBefore, oneMinuteAfter))
+            taskConfigs.add(TaskTimeConfig1(taskCounts, taskTime, threeMinutesBefore, oneMinuteBefore, oneMinuteAfter))
 
             // ログに時間をフォーマットして出力
 //            Log.d("TaskConfig", "Task #$taskNumber:")
@@ -229,12 +194,11 @@ class MainActivity : AppCompatActivity() {
         val currentTime = Calendar.getInstance()  // 現在の時間を取得
 
 // 最終的な timeStatus を保持する変数（null で初期化）
-        var finalTimeStatus1: Int? = 0
-        var finalTimeStatus2: Int? = 0
+        var finalTimeStatus: Int? = 0
 
         //ミッション1
-        for (taskNumber in 0 until taskConfigs1.size) {  // taskConfigs1.size はタスクの数
-            val taskConfig = taskConfigs1[taskNumber]  // 各タスク設定を取得
+        for (taskNumber in 0 until taskConfigs.size) {  // taskConfigs.size はタスクの数
+            val taskConfig = taskConfigs[taskNumber]  // 各タスク設定を取得
 
             // 各タスクの詳細情報を取り出す
             val taskId = taskNumber + 1
@@ -257,7 +221,7 @@ class MainActivity : AppCompatActivity() {
 
             // `timeStatus` が決まったら最終結果を保存
             if (timeStatus != 0) {
-                finalTimeStatus1 = timeStatus
+                finalTimeStatus = timeStatus
             }
 
             // 各タスクの情報を利用して処理を行う
@@ -270,65 +234,11 @@ class MainActivity : AppCompatActivity() {
         }
 
 // ループ終了後、最終的な timeStatus を出力
-        Log.d("TaskConfig", "Final Time Status1: $finalTimeStatus1")
-
-        //ミッション2
-        for (taskNumber in 0 until taskConfigs2.size) {  // taskConfigs2.size はタスクの数
-            val taskConfig = taskConfigs2[taskNumber]  // 各タスク設定を取得
-
-            // 各タスクの詳細情報を取り出す
-            val taskId = taskNumber + 1
-            val taskTime = taskConfig.taskTime
-            val threeMinutesBefore = taskConfig.threeMinutesBefore
-            val oneMinuteBefore = taskConfig.oneMinuteBefore
-            val oneMinuteAfter = taskConfig.oneMinuteAfter
-
-
-            // 現在時刻が 3 分前と 1 分前の間か、1 分前と 1 分後の間かをチェック
-            var timeStatus: Int? = 0
-
-            if (currentTime.timeInMillis in (threeMinutesBefore..oneMinuteBefore)) {
-                // 3 分前と 1 分前の間
-                timeStatus = 1
-            } else if (currentTime.timeInMillis in (oneMinuteBefore..oneMinuteAfter)) {
-                // 1 分前と 1 分後の間
-                timeStatus = 2
-            }
-
-            // `timeStatus` が決まったら最終結果を保存
-            if (timeStatus != 0) {
-                finalTimeStatus2 = timeStatus
-            }
-
-//            // 各タスクの情報を利用して処理を行う
-//            Log.d("TaskConfig", "Task #$taskId:")
-//            Log.d("TaskConfig", "  Task Time: ${timeFormat.format(taskTime)}")
-//            Log.d("TaskConfig", "  3 minutes before: ${timeFormat.format(threeMinutesBefore)}")
-//            Log.d("TaskConfig", "  1 minute before: ${timeFormat.format(oneMinuteBefore)}")
-//            Log.d("TaskConfig", "  1 minute after: ${timeFormat.format(oneMinuteAfter)}")
-//            Log.d("TaskConfig", "---------")  // 区切り
-        }
-
-        // ループ終了後、最終的な timeStatus を出力
-        Log.d("TaskConfig", "Final Time Status2: $finalTimeStatus2")
-
-
-// finalTimeStatus や finalTimeStatus2 が null の場合、デフォルト値 0 を使用
-        val finalTimeStatusSafe = finalTimeStatus1 ?: 0
-        val finalTimeStatus2Safe = finalTimeStatus2 ?: 0
-
-//// configurations 配列のサイズを確認
-//        val configurations = clockConfig.getAsJsonArray("configurations")
-
-// finalTimeStatus と finalTimeStatus2 を比較し、優先すべき設定を決定
-        val selectedFinalTimeStatus = if (finalTimeStatusSafe == finalTimeStatus2Safe) {
-            finalTimeStatusSafe  // 両方同じならその値を使用
-        } else {
-            maxOf(finalTimeStatusSafe, finalTimeStatus2Safe)  // 異なる場合は大きい方を使用
-        }
+        Log.d("TaskConfig", "Final Time Status: $finalTimeStatus")
+//        Log.d("TaskConfig", "  current Time: ${timeFormat.format(currentTime.timeInMillis)}")
 
         // finalTimeStatus が決まった後に、selectedConfig を設定する
-        val selectedConfig: JsonObject? = when (selectedFinalTimeStatus) {
+        val selectedConfig: JsonObject? = when (finalTimeStatus) {
             0 -> clockConfig.getAsJsonArray("configurations")[0].asJsonObject  // finalTimeStatus が null の場合
             1 -> clockConfig.getAsJsonArray("configurations")[1].asJsonObject    // finalTimeStatus が 1 の場合
             2 -> clockConfig.getAsJsonArray("configurations")[2].asJsonObject    // finalTimeStatus が 2 の場合
@@ -357,6 +267,87 @@ class MainActivity : AppCompatActivity() {
         handler.postDelayed({ updateTime() }, 1000)
     }
 
+
+
+    private fun manualUpdateTime() {
+        val calendar = Calendar.getInstance()
+        val currentTime = Calendar.getInstance()  // 現在の時間を取得
+        // 現在時刻が 3 分前と 1 分前の間か、1 分前と 1 分後の間かをチェック
+        var timeStatus: Int? = 0
+// 最終的な timeStatus を保持する変数（null で初期化）
+        var finalTimeStatus: Int? = 0
+
+        for (taskNumber in 0 until taskConfigs.size) {  // taskConfigs.size はタスクの数
+            val taskConfig = taskConfigs[taskNumber]  // 各タスク設定を取得
+
+            // 各タスクの詳細情報を取り出す
+            val taskId = taskNumber + 1
+            val taskTime = taskConfig.taskTime
+            val threeMinutesBefore = taskConfig.threeMinutesBefore
+
+
+            if (manualId == 0){
+                timeStatus = 0
+
+            }
+            else if (manualId == 1) {
+                if (currentTime.timeInMillis in (threeMinutesBefore..taskTime)) {
+                    // 3 分前と 1 分前の間
+                    timeStatus = 2
+                }else {
+                    timeStatus = 1
+                }
+
+            }
+
+            if (timeStatus == 2) {
+                finalTimeStatus = 2
+                break // for 文を抜ける
+            } else {
+                finalTimeStatus = timeStatus
+            }
+
+            // 各タスクの情報を利用して処理を行う
+//            Log.d("TaskConfig", "Task #$taskId:")
+////            Log.d("TaskConfig", "  3 minutes before: ${timeFormat.format(currentTime)}")
+//            Log.d("TaskConfig", "  3 minutes before: ${timeFormat.format(threeMinutesBefore)}")
+//            Log.d("TaskConfig", "  current Time: ${timeFormat.format(currentTime.timeInMillis)}")
+//            Log.d("TaskConfig", "  Task Time: ${timeFormat.format(taskTime)}")
+//            Log.d("TaskConfig", "---------")  // 区切り
+        }
+
+// ループ終了後、最終的な timeStatus を出力
+        Log.d("TaskConfig", "Final Time Status22: $finalTimeStatus")
+//        Log.d("TaskConfig", "  current Time: ${timeFormat.format(currentTime.timeInMillis)}")
+        // finalTimeStatus が決まった後に、selectedConfig を設定する
+        val selectedConfig: JsonObject? = when (finalTimeStatus) {
+            0 -> clockConfig.getAsJsonArray("configurations")[0].asJsonObject  // finalTimeStatus が null の場合
+            1 -> clockConfig.getAsJsonArray("configurations")[1].asJsonObject    // finalTimeStatus が 1 の場合
+            2 -> clockConfig.getAsJsonArray("configurations")[2].asJsonObject    // finalTimeStatus が 2 の場合
+            else -> null  // finalTimeStatus がそれ以外の場合
+        }
+
+// null チェック
+        selectedConfig?.let {
+            updateClockDisplay(it)
+        } ?: run {
+            // selectedConfig が null の場合の処理（例: エラーメッセージを表示）
+            Log.d("TaskConfig", "No valid configuration selected")
+        }
+//        updateClockDisplay(clockConfig.getAsJsonArray("configurations")[0].asJsonObject)
+
+        // 各 TextView に時間を表示
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        val second = calendar.get(Calendar.SECOND)
+
+        hourTextView.text = String.format(Locale.getDefault(), "%02d", hour)
+        minuteTextView.text = String.format(Locale.getDefault(), "%02d", minute)
+        secondTextView.text = String.format(Locale.getDefault(), "%02d", second)
+
+        // 毎秒更新
+        handler.postDelayed({ manualUpdateTime() }, 1000)
+    }
 
     private fun updateClockDisplay(config: JsonObject) {
         val hourSize = config.get("hourSize").asFloat

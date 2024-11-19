@@ -2,23 +2,14 @@
   "tasks": [
     {
       "id": "task1",
-      "startTime": "17:00:00",
-      "intervalTime1": 5,
-      "intervalTime2": 5,
+      "startTime": "14:00:00",
+      "intervalTime": 5,
       "taskDuration": 120
     },
     {
       "id": "task2",
-      "startTime": "17:00:00",
-      "intervalTime1": 10,
-      "intervalTime2": 10,
-      "taskDuration": 120
-    },
-    {
-      "id": "task3",
-      "startTime": "09:00:00",
-      "intervalTime1": 30,
-      "intervalTime2": 5,
+      "startTime": "14:00:00",
+      "intervalTime": 5,
       "taskDuration": 120
     }
   ]
