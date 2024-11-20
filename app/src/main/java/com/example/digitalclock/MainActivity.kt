@@ -272,6 +272,7 @@ class MainActivity : AppCompatActivity() {
     private fun manualUpdateTime() {
         val calendar = Calendar.getInstance()
         val currentTime = Calendar.getInstance()  // 現在の時間を取得
+        val currentSecond = currentTime.get(Calendar.SECOND) // 現在の秒を取得
         // 現在時刻が 3 分前と 1 分前の間か、1 分前と 1 分後の間かをチェック
         var timeStatus: Int? = 0
 // 最終的な timeStatus を保持する変数（null で初期化）
@@ -291,17 +292,32 @@ class MainActivity : AppCompatActivity() {
 
             }
             else if (manualId == 1) {
+                // 5 分前と ミッション時間の間
                 if (currentTime.timeInMillis in (threeMinutesBefore..taskTime)) {
-                    // 3 分前と 1 分前の間
-                    timeStatus = 2
+                    if (currentSecond in (0 ..19))
+                    {
+                        timeStatus = 3
+                    } else if (currentSecond in (20 ..39))
+                    {
+                        timeStatus = 4
+                    } else if (currentSecond in (40 ..59))
+                    {
+                        timeStatus = 5
+                    }
                 }else {
                     timeStatus = 1
                 }
 
             }
 
-            if (timeStatus == 2) {
-                finalTimeStatus = 2
+            if (timeStatus == 3) {
+                finalTimeStatus = 3
+                break // for 文を抜ける
+            } else if (timeStatus == 4){
+                finalTimeStatus = 4
+                break // for 文を抜ける
+            } else if (timeStatus == 5){
+                finalTimeStatus = 5
                 break // for 文を抜ける
             } else {
                 finalTimeStatus = timeStatus
@@ -317,13 +333,17 @@ class MainActivity : AppCompatActivity() {
         }
 
 // ループ終了後、最終的な timeStatus を出力
-        Log.d("TaskConfig", "Final Time Status22: $finalTimeStatus")
-//        Log.d("TaskConfig", "  current Time: ${timeFormat.format(currentTime.timeInMillis)}")
+        Log.d("TaskConfig", "Final Time Status: $finalTimeStatus")
+        Log.d("TaskConfig", "  current Time: ${timeFormat.format(currentTime.timeInMillis)}")
+        Log.d("TaskConfig", "  current Second: $currentSecond")
         // finalTimeStatus が決まった後に、selectedConfig を設定する
         val selectedConfig: JsonObject? = when (finalTimeStatus) {
-            0 -> clockConfig.getAsJsonArray("configurations")[0].asJsonObject  // finalTimeStatus が null の場合
+            0 -> clockConfig.getAsJsonArray("configurations")[0].asJsonObject  // finalTimeStatus が 0 の場合
             1 -> clockConfig.getAsJsonArray("configurations")[1].asJsonObject    // finalTimeStatus が 1 の場合
             2 -> clockConfig.getAsJsonArray("configurations")[2].asJsonObject    // finalTimeStatus が 2 の場合
+            3 -> clockConfig.getAsJsonArray("configurations")[3].asJsonObject  // finalTimeStatus が 3 の場合
+            4 -> clockConfig.getAsJsonArray("configurations")[4].asJsonObject    // finalTimeStatus が 4 の場合
+            5 -> clockConfig.getAsJsonArray("configurations")[5].asJsonObject    // finalTimeStatus が 5 の場合
             else -> null  // finalTimeStatus がそれ以外の場合
         }
 
@@ -340,6 +360,8 @@ class MainActivity : AppCompatActivity() {
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
         val second = calendar.get(Calendar.SECOND)
+
+
 
         hourTextView.text = String.format(Locale.getDefault(), "%02d", hour)
         minuteTextView.text = String.format(Locale.getDefault(), "%02d", minute)
