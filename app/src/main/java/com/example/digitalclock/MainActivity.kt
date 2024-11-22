@@ -16,6 +16,7 @@ import android.os.Build
 import android.graphics.Color
 import android.view.MotionEvent
 
+aaaa
 
 class MainActivity : AppCompatActivity() {
     //機種選択
