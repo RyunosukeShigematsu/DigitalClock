@@ -5,6 +5,7 @@
     android:background="#000000"
     android:keepScreenOn="true"> 　
 
+
     <TextView
         android:id="@+id/hourTextView"
         android:layout_width="wrap_content"

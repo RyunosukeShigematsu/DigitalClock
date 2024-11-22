@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.util.Log
 import android.os.Build
+import android.graphics.Color
+import android.view.MotionEvent
 
 
 class MainActivity : AppCompatActivity() {
@@ -52,6 +54,17 @@ class MainActivity : AppCompatActivity() {
     // クラスのプロパティとして taskCounts を定義
     private var taskCounts: Long = 0
 
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        // タップイベントが発生した場合
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            // manualId を切り替える
+            manualId = if (manualId == 0) 1 else 0
+//            Log.d("MainActivity", "manualId: $manualId")
+        }
+        return super.onTouchEvent(event)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
          setContentView(R.layout.activity_main) // 横向きレイアウトのまま。これは削除しないといけない
@@ -70,7 +83,6 @@ class MainActivity : AppCompatActivity() {
         minuteTextView.typeface = typeface
         colon2View.typeface = typeface
         secondTextView.typeface = typeface
-
 
 
         // JSON設定を読み込む
