@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // タスクの時間範囲と設定IDを保持するデータクラス
-    data class TaskTimeConfig1(
+    data class TaskTimeConfig(
         val configId: Long, // 設定ID 0=デフォルト, 1=3分前～1分前, 2=1分前～1分後
         val taskTime: Long, // タスクの終了時刻
         val threeMinutesBefore: Long, // 3分前
@@ -157,16 +157,9 @@ class MainActivity : AppCompatActivity() {
         val oneMinuteAfter: Long, // 1分後
     )
 
-    data class TaskTimeConfig2(
-        val configId: Long, // 設定ID 0=デフォルト, 1=3分前～1分前, 2=1分前～1分後
-        val taskTime: Long, // タスクの終了時刻
-        val threeMinutesBefore: Long, // 3分前
-        val oneMinuteBefore: Long, // 1分前
-        val oneMinuteAfter: Long, // 1分後
-    )
 
     // 各タスクの時間範囲をリストに保存
-    val taskConfigs = mutableListOf<TaskTimeConfig1>()
+    val taskConfigs = mutableListOf<TaskTimeConfig>()
 
 
     // タスク範囲を事前に計算してリストに格納する関数（ミッション1）
@@ -187,7 +180,7 @@ class MainActivity : AppCompatActivity() {
             val oneMinuteAfter = taskTime + (60 * 1000)
 
 
-            taskConfigs.add(TaskTimeConfig1(taskCounts, taskTime, threeMinutesBefore, oneMinuteBefore, oneMinuteAfter))
+            taskConfigs.add(TaskTimeConfig(taskCounts, taskTime, threeMinutesBefore, oneMinuteBefore, oneMinuteAfter))
 
             // ログに時間をフォーマットして出力
 //            Log.d("TaskConfig", "Task #$taskNumber:")
