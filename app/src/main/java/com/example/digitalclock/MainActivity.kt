@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //時計の表示を手動で変更
-    private var manualId = 1
+    private var manualId = 0
 
     //時計
     private lateinit var hourTextView: TextView
@@ -246,13 +246,13 @@ class MainActivity : AppCompatActivity() {
         }
 
 // null チェック
-        selectedConfig?.let {
-            updateClockDisplay(it)
-        } ?: run {
-            // selectedConfig が null の場合の処理（例: エラーメッセージを表示）
-            Log.d("TaskConfig", "No valid configuration selected")
-        }
-//        updateClockDisplay(clockConfig.getAsJsonArray("configurations")[0].asJsonObject)
+//        selectedConfig?.let {
+//            updateClockDisplay(it)
+//        } ?: run {
+//            // selectedConfig が null の場合の処理（例: エラーメッセージを表示）
+//            Log.d("TaskConfig", "No valid configuration selected")
+//        }
+        updateClockDisplay(clockConfig.getAsJsonArray("configurations")[0].asJsonObject)
 
         // 各 TextView に時間を表示
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -292,7 +292,7 @@ class MainActivity : AppCompatActivity() {
 
             }
             else if (manualId == 1) {
-                // 5 分前と ミッション時間の間
+                // 3 分前と ミッション時間の間
                 if (currentTime.timeInMillis in (threeMinutesBefore..taskTime)) {
                     if (currentSecond in (0 ..19))
                     {
