@@ -2,15 +2,10 @@
   "tasks": [
     {
       "id": "task1",
-      "startTime": "13:00:00",
-      "intervalTime": 20,
-      "taskDuration": 120
-    },
-    {
-      "id": "task2",
-      "startTime": "14:00:00",
-      "intervalTime": 20,
-      "taskDuration": 120
+      "startTime": "13:15:00",
+      "missionInterval": 6,
+      "firstSameMission": "14:00:00",
+      "secondSameMission": "15:00:00"
     }
   ]
 }

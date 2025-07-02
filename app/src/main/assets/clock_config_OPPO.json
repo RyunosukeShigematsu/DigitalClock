@@ -3,16 +3,16 @@
     {
       "name": "Normal",
       "id": 0,
-      "hourSize": 150,
-      "colon1Size": 100,
-      "minuteSize": 150,
-      "colon2Size": 100,
-      "secondSize": 150,
-      "hourPosition": { "x": 400, "y": 300 },
-      "colon1Position": { "x": 770, "y": 390 },
-      "minutePosition": { "x": 980, "y": 300 },
-      "colon2Position": { "x": 1330, "y": 390 },
-      "secondPosition": { "x": 1550, "y": 300 }
+      "hourSize": 85,
+      "colon1Size": 85,
+      "minuteSize": 85,
+      "colon2Size": 85,
+      "secondSize": 85,
+      "hourPosition": { "x": 400, "y": 400 },
+      "colon1Position": { "x": 720, "y": 390 },
+      "minutePosition": { "x": 920, "y": 400 },
+      "colon2Position": { "x": 1240, "y": 390 },
+      "secondPosition": { "x": 1450, "y": 400 }
     },
     {
       "name": "MinuteBig",

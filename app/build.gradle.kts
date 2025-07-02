@@ -57,4 +57,7 @@ dependencies {
 
     // Firebase Analytics の追加（必要に応じて他の Firebase サービスも追加可能）
     implementation("com.google.firebase:firebase-analytics")
+
+    // OkHttpライブラリの追加
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
 }
